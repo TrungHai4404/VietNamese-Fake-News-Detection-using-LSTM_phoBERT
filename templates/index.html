@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phát Hiện Tin Giả</title>
+</head>
+<body>
+    <h1>Phát Hiện Tin Giả</h1>
+    <form method="POST">
+        <textarea name="text" rows="6" cols="60" placeholder="Nhập bài viết để kiểm tra..."></textarea><br><br>
+        <input type="submit" value="Phân tích">
+    </form>
+    {% if result %}
+        <h2>{{ result }}</h2>
+    {% endif %}
+</body>
+</html>
