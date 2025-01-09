@@ -8,6 +8,7 @@ from torch.utils.data import Dataset
 import torch.nn.utils.rnn as rnn_utils
 from torch.utils.data import DataLoader
 import torch.nn as nn
+
 # Kiểm tra nếu máy tính có GPU thì sẽ dùng GPU (cuda), nếu không thì sử dụng CPU (cpu).
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 from transformers import AutoTokenizer
@@ -49,8 +50,8 @@ test_ds = Custom_Text_Dataset('D:\\fake_news_LSTM_project\\datasets\\test.csv', 
 valid_ds = Custom_Text_Dataset('D:\\fake_news_LSTM_project\\datasets\\val.csv', tokenizer)
 
 
-
-def custom_collate_fn(batch):           #Sắp xếp các mẫu trong batch theo độ dài giảm dần (giúp LSTM xử lý dễ dàng hơn)
+#Sắp xếp các mẫu trong batch theo độ dài giảm dần (giúp LSTM xử lý dễ dàng hơn)
+def custom_collate_fn(batch):           
     sorted_batch = sorted(batch, key=lambda x: len(x[0]), reverse=True)
     return sorted_batch
 
@@ -86,7 +87,6 @@ for batch in valid_dl:
 # fc: Dự đoán nhãn.
 # sigmoid: Kích hoạt để tạo xác suất.
 class LSTMNet(nn.Module):
-
     def __init__(self,vocab_size,embedding_dim,hidden_dim,output_dim,n_layers,bidirectional,dropout):
 
         super(LSTMNet,self).__init__()
@@ -155,7 +155,6 @@ def binary_accuracy(preds, y):
     return acc
 # Huấn luyện mô hình trên tập train.
 def train(model,iterator,optimizer,criterion):
-
     epoch_loss = 0.0
     epoch_acc = 0.0
 
@@ -193,7 +192,6 @@ def train(model,iterator,optimizer,criterion):
 
 # Đánh giá mô hình trên tập test/valid
 def evaluate(model,iterator,criterion):
-
     epoch_loss = 0.0
     epoch_acc = 0.0
 
@@ -229,7 +227,6 @@ best_valid = 0.93
 for epoch in range(1,EPOCH_NUMBER+1):
 
     train_loss,train_acc = train(model,training_dl,optimizer,criterion)
-
     test_loss,test_acc = evaluate(model,testing_dl,criterion)
     valid_loss, valid_acc = evaluate(model, validing_dl, criterion)
 
@@ -242,20 +239,5 @@ for epoch in range(1,EPOCH_NUMBER+1):
       print(f'Test. Acc: {test_acc*100:.2f}%')
     print()
 
-# Hàm kiểm tra một đoạn văn bản
-def input_test(text, tokenizer, model, device):
-    tokens = tokenizer.tokenize(text)
-    ids = torch.tensor(tokenizer.convert_tokens_to_ids(tokens), dtype=torch.long).unsqueeze(0).to(device)
-    length = torch.tensor([ids.shape[1]], dtype=torch.long).to(device)
-    model.eval()
-    with torch.no_grad():
-        prediction = model(ids, length).item()
-    return int(torch.round(torch.tensor(prediction)))
 
-# Dự đoán tin thật/tin giả
-input_text = input("Nhập nội dung để kiểm tra: ")
-result = input_test(input_text, tokenizer, model, device)
-if result == 0:
-    print("Đây là tin thật.")
-else:
-    print("Đây là tin giả.")
+

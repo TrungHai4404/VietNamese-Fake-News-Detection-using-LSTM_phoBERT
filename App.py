@@ -12,14 +12,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 tokenizer = AutoTokenizer.from_pretrained("vinai/phobert-base")
 
 class LSTMNet(nn.Module):
-
     def __init__(self,vocab_size,embedding_dim,hidden_dim,output_dim,n_layers,bidirectional,dropout):
 
         super(LSTMNet,self).__init__()
-
         # Embedding layer converts integer sequences to vector sequences
         self.embedding = nn.Embedding(vocab_size,embedding_dim)
-
         # LSTM layer process the vector sequences
         self.lstm = nn.LSTM(embedding_dim,
                             hidden_dim,
@@ -33,7 +30,6 @@ class LSTMNet(nn.Module):
         self.fc = nn.Linear(hidden_dim * 2,output_dim)
         # Prediction activation function
         self.sigmoid = nn.Sigmoid()
-
 
     def forward(self,text,text_lengths):
         embedded = self.embedding(text).to(device)
